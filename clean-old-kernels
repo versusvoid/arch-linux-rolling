@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -gt 0 ]; then
+	if [[ $# != 1 || ! "$1" =~ ^[0-9]+$ ]]; then
+		echo "Expect exactly one argument: number of additional kernels to keep"
+		exit 1
+	fi
+	NUM_KERNELS_TO_KEEP=$1
+else
+	eval $(egrep '^[A-Z_]+=[0-9A-Z]+\s*$' /etc/rolling.conf -s)
+fi
+
+kernel_packages=()
+skip=$NUM_KERNELS_TO_KEEP
+current_kernel=linux-rolling_$(uname -r | sed 's/-ARCH//g; s/[.-]/_/g;')
+for p in $(pacman -Qtq | egrep 'linux-rolling_[1-9]' | pacsort); do
+	if [ "$p" = "$current_kernel" ]; then
+		if [ $skip -gt 0 ]; then
+			skip=$(($skip - 1))
+		fi
+		continue
+	fi
+	kernel_packages[${#kernel_packages[@]}]=$p
+done
+
+num_packages_to_remove=$((${#kernel_packages[@]} - $skip))
+if [ $num_packages_to_remove -lt 1 ]; then
+	exit 0
+fi
+
+to_remove_kernel_packages=${kernel_packages[@]:0:$num_packages_to_remove}
+SUDO=$(command -v sudo)
+$SUDO pacman -R $to_remove_kernel_packages
