@@ -59,6 +59,7 @@ package_linux-rolling-transitional() {
 _package_linux-rolling() {
 	pkgdesc="The Linux kernel and modules"
 	backup=("etc/mkinitcpio.d/linux-$pkgver-$pkgrel.preset")
+	depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
 	sed "{
 		s#boot/initramfs-linux.img#boot/initramfs-linux-$pkgver-$pkgrel.img#g;
 		s#boot/initramfs-linux-fallback.img#boot/initramfs-linux-fallback-$pkgver-$pkgrel.img#g;
