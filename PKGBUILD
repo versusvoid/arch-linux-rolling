@@ -38,28 +38,21 @@ package_linux-rolling-transitional() {
 	arch=('any')
 	depends=("linux-rolling_${_full_version//[.-]/_}=$_full_version")
 	backup=("usr/lib/modules/extramodules-$_kernel_version-ARCH/version")
-	provides=("linux=$pkgver-$pkgrel")
-	conflicts=('linux')
 	optdepends=('bash: cleanup script')
 
-	mkdir -p "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH"
-	mv usr/lib/modules/extramodules-$_kernel_version-ARCH/version "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/"
-	rmdir usr/lib/modules/extramodules-$_kernel_version-ARCH
-
-	mkdir -p "$pkgdir/usr/share/libalpm/hooks"
-	mv 91-grub.hook "$pkgdir/usr/share/libalpm/hooks/"
-
-	mkdir -p "$pkgdir/etc"
-	mv rolling.conf "$pkgdir/etc/"
-
-	mkdir -p "$pkgdir/usr/bin"
-	mv clean-old-kernels "$pkgdir/usr/bin/"
+	install -Dm644 usr/lib/modules/extramodules-$_kernel_version-ARCH/version \
+		"$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version"
+	install -Dm644 91-grub.hook "$pkgdir/usr/share/libalpm/hooks/91-grub.hook"
+	install -Dm644 rolling.conf "$pkgdir/etc/rolling.conf"
+	install -Dm755 clean-old-kernels "$pkgdir/usr/bin/clean-old-kernels"
 }
 
 _package_linux-rolling() {
 	pkgdesc="The Linux kernel and modules"
 	backup=("etc/mkinitcpio.d/linux-$pkgver-$pkgrel.preset")
 	depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
+	provides=("linux=$pkgver-$pkgrel")
+	conflicts=("linux=$pkgver-$pkgrel")
 	sed "{
 		s#boot/initramfs-linux.img#boot/initramfs-linux-$pkgver-$pkgrel.img#g;
 		s#boot/initramfs-linux-fallback.img#boot/initramfs-linux-fallback-$pkgver-$pkgrel.img#g;
@@ -86,7 +79,7 @@ _package_linux-rolling() {
 
 	mv usr/lib "$pkgdir/usr/"
 
-	mkdir -p "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH"
+	rm -f "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version"
 }
 
 eval "package_${pkgname[1]}() {
