@@ -37,11 +37,9 @@ validpgpkeys=('5B7E3FB71B7F10329A1C03AB771DF6627EDF681F') # Tobias Powalowski <t
 package_linux-rolling-transitional() {
 	arch=('any')
 	depends=("linux-rolling_${_full_version//[.-]/_}=$_full_version")
-	backup=("usr/lib/modules/extramodules-$_kernel_version-ARCH/version")
 	optdepends=('bash: cleanup script')
+	install=linux-transitional.install
 
-	install -Dm644 usr/lib/modules/extramodules-$_kernel_version-ARCH/version \
-		"$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version"
 	install -Dm644 91-grub.hook "$pkgdir/usr/share/libalpm/hooks/91-grub.hook"
 	install -Dm644 rolling.conf "$pkgdir/etc/rolling.conf"
 	install -Dm755 clean-old-kernels "$pkgdir/usr/bin/clean-old-kernels"
@@ -51,6 +49,7 @@ _package_linux-rolling() {
 	pkgdesc="The Linux kernel and modules"
 	backup=("etc/mkinitcpio.d/linux-$pkgver-$pkgrel.preset")
 	depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
+	optdepends=('crda: to set the correct wireless channels of your country')
 	provides=("linux=$pkgver-$pkgrel")
 	conflicts=("linux=$pkgver-$pkgrel")
 	sed "{
@@ -79,7 +78,8 @@ _package_linux-rolling() {
 
 	mv usr/lib "$pkgdir/usr/"
 
-	rm -f "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version"
+	mv "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version" \
+		"$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version-$pkgver-$pkgrel"
 }
 
 eval "package_${pkgname[1]}() {

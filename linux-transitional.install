@@ -1,0 +1,29 @@
+post_install () {
+	local kernel_version=${1%.*}
+	if [ ! -e /usr/lib/modules/extramodules-$kernel_version-ARCH/version ]; then
+		ln -sf /usr/lib/modules/extramodules-$kernel_version-ARCH/version-$1 \
+			/usr/lib/modules/extramodules-$kernel_version-ARCH/version
+	fi
+}
+
+post_upgrade() {
+	local new_kernel_version=${1%.*} old_kernel_version=${2%.*}
+	if [ $new_kernel_version != $old_kernel_version ]; then
+		post_remove $2
+		post_install $1
+	else
+		if [[ /usr/lib/modules/extramodules-$old_kernel_version-ARCH/version -ef \
+				/usr/lib/modules/extramodules-$old_kernel_version-ARCH/version-$2 ]]; then
+			ln -sf /usr/lib/modules/extramodules-$new_kernel_version-ARCH/version-$1 \
+				/usr/lib/modules/extramodules-$new_kernel_version-ARCH/version
+		fi
+	fi
+}
+
+post_remove() {
+	local kernel_version=${1%.*}
+	if [[ /usr/lib/modules/extramodules-$kernel_version-ARCH/version -ef \
+			/usr/lib/modules/extramodules-$kernel_version-ARCH/version-$2 ]]; then
+		rm /usr/lib/modules/extramodules-$kernel_version-ARCH/version
+	fi
+}
