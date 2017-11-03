@@ -1,0 +1,46 @@
+#!/bin/bash
+
+kernel-version() {
+	local kernel_version=${1%-ARCH/version*}
+	echo ${kernel_version##*-}
+}
+
+relink-version() {
+	local installed=$(pacman -Qqs linux-rolling_${1//./_} | pacsort | head -n 1)
+	if [ ! "$installed" ]; then
+		return 1
+	fi
+
+	local package_version=${installed##linux-rolling_}
+	local package_release=${package_version##*_}
+	package_version=${package_version%_*}
+	package_version=${package_version//_/.}
+	local f="/usr/lib/modules/extramodules-$1-ARCH/version-$package_version-$package_release"
+	if [ ! -e "$f" ]; then
+		echo "Can't find $f. It must belong to $installed"
+		return 2
+	fi
+
+	ln -sf "$f" /usr/lib/modules/extramodules-$1-ARCH/version
+}
+
+linux-version-removed() {
+	local kernel_version=$(kernel-version "$1")
+	relink-version $kernel_version
+}
+
+linux-rolling-version-removed() {
+	local kernel_version=$(kernel-version "$1")
+	if [ "$(readlink  "/usr/lib/modules/extramodules-$kernel_version-ARCH/version")" != "$1" ]; then
+		return 0
+	fi
+	relink-version $kernel_version
+}
+
+while read -r line; do
+	if [[ "$line" == *version ]]; then
+		linux-version-removed "/$line"
+	else
+		linux-rolling-version-removed "/$line"
+	fi
+done

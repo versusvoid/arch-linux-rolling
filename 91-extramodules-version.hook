@@ -1,11 +1,11 @@
 [Trigger]
 Type = File
 Operation = Remove
-Target = usr/lib/modules/extramodules-*-ARCH/version
+Target = usr/lib/modules/extramodules-*-ARCH/version*
 
 [Action]
 Description = Symlink rolling kernel version to extramodules
 When = PostTransaction
 Depends = bash
-Exec = /usr/lib/linux-rolling/link-extramodules-version
+Exec = /usr/lib/linux-rolling/relink-extramodules-version
 NeedsTargets
