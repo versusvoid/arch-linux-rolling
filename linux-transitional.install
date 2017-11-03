@@ -12,8 +12,8 @@ post_upgrade() {
 		post_remove $2
 		post_install $1
 	else
-		if [[ /usr/lib/modules/extramodules-$old_kernel_version-ARCH/version -ef \
-				/usr/lib/modules/extramodules-$old_kernel_version-ARCH/version-$2 ]]; then
+		if [ "$(readlink /usr/lib/modules/extramodules-$old_kernel_version-ARCH/version)" = \
+				/usr/lib/modules/extramodules-$old_kernel_version-ARCH/version-$2 ]; then
 			ln -sf /usr/lib/modules/extramodules-$new_kernel_version-ARCH/version-$1 \
 				/usr/lib/modules/extramodules-$new_kernel_version-ARCH/version
 		fi
@@ -22,8 +22,8 @@ post_upgrade() {
 
 post_remove() {
 	local kernel_version=${1%.*}
-	if [[ /usr/lib/modules/extramodules-$kernel_version-ARCH/version -ef \
-			/usr/lib/modules/extramodules-$kernel_version-ARCH/version-$2 ]]; then
+	if [ "$(readlink /usr/lib/modules/extramodules-$kernel_version-ARCH/version)" = \
+			/usr/lib/modules/extramodules-$kernel_version-ARCH/version-$1 ]; then
 		rm /usr/lib/modules/extramodules-$kernel_version-ARCH/version
 	fi
 }

@@ -25,12 +25,16 @@ source=(
 	"91-grub.hook"
 	"rolling.conf"
 	"clean-old-kernels"
+	"91-extramodules-version.hook"
+	"link-extramodules-version"
 )
 sha256sums=(
 	"SKIP" "SKIP"
 	"a50791c4a0b4d15b803838d8718215c0addf0f849e9db5f94860591a312918ef"
 	"2a05e4b8b0f285168863415c49d7259fd4c51bb1e4312b1e9dbe9e4823e61981"
 	"eb087e424d1309edeb0ca9e367d7220dbc309f768aac9d2e3de495a3ad04fb6c"
+	"0828821aac7e2a81a0a15a52eb7093843ddce1133db9c31caf1d75847e094686"
+	"90e48a6d0a24db20b4861b04e82c182034bb4e20ee4ccf880d87befeb82a8a15"
 )
 validpgpkeys=('5B7E3FB71B7F10329A1C03AB771DF6627EDF681F') # Tobias Powalowski <tobias.powalowski@googlemail.com>
 
@@ -41,8 +45,10 @@ package_linux-rolling-transitional() {
 	install=linux-transitional.install
 
 	install -Dm644 91-grub.hook "$pkgdir/usr/share/libalpm/hooks/91-grub.hook"
+	install -Dm644 91-extramodules-version.hook "$pkgdir/usr/share/libalpm/hooks/91-extramodules-version.hook"
 	install -Dm644 rolling.conf "$pkgdir/etc/rolling.conf"
 	install -Dm755 clean-old-kernels "$pkgdir/usr/bin/clean-old-kernels"
+	install -Dm755 link-extramodules-version "$pkgdir/usr/lib/linux-rolling/link-extramodules-version"
 }
 
 _package_linux-rolling() {
