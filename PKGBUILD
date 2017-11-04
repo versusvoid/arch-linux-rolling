@@ -41,8 +41,7 @@ validpgpkeys=('5B7E3FB71B7F10329A1C03AB771DF6627EDF681F') # Tobias Powalowski <t
 
 package_linux-rolling() {
 	arch=('any')
-	depends=("linux-rolling_${_full_version//[.-]/_}=$_full_version")
-	optdepends=('bash: cleanup script')
+	depends=("linux-rolling_${_full_version//[.-]/_}=$_full_version" "bash")
 	install=linux-transitional.install
 
 	install -Dm644 91-grub.hook "$pkgdir/usr/share/libalpm/hooks/91-grub.hook"
