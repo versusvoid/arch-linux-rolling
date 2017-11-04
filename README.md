@@ -7,10 +7,4 @@ With the expense of additional packaging and unpackaging and without [infamous b
 
 ## installation
 
-The simplest approach would be:
-```bash
-$ sudo pacman -U linux-rolling-transitional-4.13.9-1-x86_64.pkg.tar \
-    linux-rolling_4_13_9_1-4.13.9-1-x86_64.pkg.tar
-```
-
-Note, if you installed `linux-rolling-transitional` after `linux-rolling_*`, you should manually regenerate `grub.cfg`.
+Note, if you installed `linux-rolling` after `linux-rolling_*`, you should manually regenerate `grub.cfg`.
