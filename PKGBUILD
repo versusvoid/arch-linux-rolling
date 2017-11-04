@@ -21,19 +21,21 @@ replaces=()
 options=('!strip')
 source=(
 	$_source_package{,.sig}
-	"91-grub.hook"
 	"rolling.conf"
 	"clean-old-kernels"
 	"91-extramodules-version.hook"
 	"relink-extramodules-version"
+	"91-grub.hook"
+	"update-grub"
 )
 sha256sums=(
 	"SKIP" "SKIP"
-	"a50791c4a0b4d15b803838d8718215c0addf0f849e9db5f94860591a312918ef"
-	"2a05e4b8b0f285168863415c49d7259fd4c51bb1e4312b1e9dbe9e4823e61981"
+	"fa56a9d520046462a29ff5c52af2f40026a9c6537cf212b8bb2f1f41ee0838fd"
 	"eb087e424d1309edeb0ca9e367d7220dbc309f768aac9d2e3de495a3ad04fb6c"
 	"7f11c0e3a11c0088789676c0398d15c6a71dc7094c78e4093bd72e8421fbcb84"
 	"dc9912bce065140f5a955795e10490c15b42a95dcf92b5c208fe76f7ac488a0e"
+	"bb519b71092079a66498f22ef89feb6d41393d61688896ebe0226f979ed6655e"
+	"6a4f3779e07cfbba36fd25fb4853292e4559ca96a750121836c8bedb7e1132bc"
 )
 validpgpkeys=('5B7E3FB71B7F10329A1C03AB771DF6627EDF681F') # Tobias Powalowski <tobias.powalowski@googlemail.com>
 
@@ -48,6 +50,7 @@ package_linux-rolling() {
 	install -Dm644 rolling.conf "$pkgdir/etc/rolling.conf"
 	install -Dm755 clean-old-kernels "$pkgdir/usr/bin/clean-old-kernels"
 	install -Dm755 relink-extramodules-version "$pkgdir/usr/lib/linux-rolling/relink-extramodules-version"
+	install -Dm755 update-grub "$pkgdir/usr/lib/linux-rolling/update-grub"
 }
 
 _package_linux-rolling() {

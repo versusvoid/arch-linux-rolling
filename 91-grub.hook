@@ -8,5 +8,4 @@ Target = boot/vmlinuz-linux*
 [Action]
 Description = Updating grub config
 When = PostTransaction
-Depends = grub
-Exec = /usr/bin/grub-mkconfig -o /boot/grub/grub.cfg
+Exec = /usr/lib/linux-rolling/update-grub

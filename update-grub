@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if ! command -v grub-mkconfig > /dev/null; then
+	exit
+fi
+
+eval $(egrep '^[A-Z_]+=[0-9A-Z]+\s*$' /etc/rolling.conf -s)
+if [ "$DISABLE_GRUB_RECONFIGURATION" -a "$DISABLE_GRUB_RECONFIGURATION" != 0 ]; then
+	exit
+fi
+
+if findmnt --fstab -uno SOURCE /boot &>/dev/null && ! mountpoint -q /boot; then
+	echo "WARNING: /boot appears to be a separate partition but is not mounted."
+	echo "Grub would not be reconfigured and you may not be able to boot"
+	exit
+fi
+
+if [ ! -e /boot/grub/grub.cfg ]; then
+	echo "WARNING: /boot/grub/grub.cfg not found"
+	echo "Grub would not be reconfigured and you may not be able to boot"
+	exit
+fi
+
+grub-mkconfig -o /boot/grub/grub.cfg
