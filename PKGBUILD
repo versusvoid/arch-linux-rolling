@@ -61,7 +61,7 @@ _package_linux-rolling() {
 	conflicts=("linux=$pkgver-$pkgrel")
 	sed "{
 		s#boot/initramfs-linux.img#boot/initramfs-linux-$pkgver-$pkgrel.img#g;
-		s#boot/initramfs-linux-fallback.img#boot/initramfs-linux-fallback-$pkgver-$pkgrel.img#g;
+		s#boot/initramfs-linux-fallback.img#boot/initramfs-linux-$pkgver-$pkgrel-fallback.img#g;
 	}" .INSTALL > ${startdir}/linux.install.pkg
 	true && install=linux.install.pkg
 
@@ -71,7 +71,7 @@ _package_linux-rolling() {
 	sed -i "{
 		s#/boot/vmlinuz-linux#/boot/vmlinuz-linux-$pkgver-$pkgrel#g;
 		s#/boot/initramfs-linux.img#/boot/initramfs-linux-$pkgver-$pkgrel.img#g;
-		s#/boot/initramfs-linux-fallback.img#/boot/initramfs-linux-fallback-$pkgver-$pkgrel.img#g;
+		s#/boot/initramfs-linux-fallback.img#/boot/initramfs-linux-$pkgver-$pkgrel-fallback.img#g;
 	}" etc/mkinitcpio.d/linux.preset
 	mkdir -p "$pkgdir/etc/mkinitcpio.d"
 	mv etc/mkinitcpio.d/linux.preset "$pkgdir/etc/mkinitcpio.d/linux-$pkgver-$pkgrel.preset"
