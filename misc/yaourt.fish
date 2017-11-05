@@ -3,7 +3,7 @@ function yaourt
 	set -l linux_version_before (gunzip -c /var/lib/pacman/sync/core.db ^/dev/null | egrep -ao '^linux-[0-9][0-9.-]*[0-9]' | egrep -o '[0-9].*')
 	set -l linux_rolling_version_before (pacman -Q linux-rolling ^/dev/null | egrep -o '[0-9].*')
 
-	/usr/bin/yaourt $args
+	/usr/bin/yaourt $argv
 
 	set -l linux_version_after (gunzip -c /var/lib/pacman/sync/core.db ^/dev/null | egrep -ao '^linux-[0-9][0-9.-]*[0-9]' | egrep -o '[0-9].*')
 	set -l linux_rolling_version_after (pacman -Q linux-rolling ^/dev/null | egrep -o '[0-9].*')
@@ -26,7 +26,7 @@ function yaourt
 		rm -r $d
 	end
 
-	if test "$linux_rolling_version_before" != "$linux_rolling_version_after" -a -e /usr/bin/clean-old-kernels; then
+	if test "$linux_rolling_version_before" != "$linux_rolling_version_after" -a -e /usr/bin/clean-old-kernels
 		clean-old-kernels
 	end
 end
