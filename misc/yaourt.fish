@@ -11,19 +11,19 @@ function yaourt
 			-a "$linux_version_after" != "$linux_rolling_version_after" \
 			-a "$linux_rolling_version_after"
 		echo Building new linux-rolling
-		set -l d (mktemp -d linux-rolling-$linux_version_after.XXX)
+		set -l d (mktemp --tmpdir -d linux-rolling-$linux_version_after.XXX)
 		test -d $d; or return $status
 		pushd $d
-		git clone --depth=1 https://github.com/versusvoid/arch-linux-rolling .; or return $status
+		git clone --depth=1 https://github.com/versusvoid/arch-linux-rolling $d; or return $status
 		makepkg; or return $status
-		set -l p1 linux_rolling_(echo $linux_version_after | sed 's/[.-]/_/g')-$linux_version_after-(uname -m).pkg.tar
-		pacman -U --asdeps $p1*; or return $status
-		set -l p2 linux_rolling-$linux_version_after-any.pkg.tar
-		pacman -U $p2*; or return $status
+		set -l p1 linux-rolling_(echo $linux_version_after | sed 's/[.-]/_/g')-$linux_version_after-(uname -m).pkg.tar
+		/usr/bin/yaourt -U --asdeps $p1*; or return $status
+		set -l p2 linux-rolling-$linux_version_after-any.pkg.tar
+		/usr/bin/yaourt -U $p2*; or return $status
 		set linux_rolling_version_after $linux_version_after
-		rm $p1* $p2* linux-$linux_version_after-(uname -m).pkg.tar.xz{,sig}; or return $status
+		rm $p1* $p2* linux-$linux_version_after-(uname -m).pkg.tar.xz{,.sig}; or return $status
 		popd
-		rm -r $d
+		rm -rf $d
 	end
 
 	if test "$linux_rolling_version_before" != "$linux_rolling_version_after" -a -e /usr/bin/clean-old-kernels
