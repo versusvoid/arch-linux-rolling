@@ -1,27 +1,26 @@
 post_install () {
-	local kernel_version=${1%.*}
-	if [ ! -e /usr/lib/modules/extramodules-$kernel_version-ARCH/version ]; then
-		ln -sf /usr/lib/modules/extramodules-$kernel_version-ARCH/version-$1 \
-			/usr/lib/modules/extramodules-$kernel_version-ARCH/version
+	if [ ! -e /usr/lib/modules/extramodules-ARCH/version ]; then
+		ln -sf /usr/lib/modules/extramodules-ARCH/version-$1 \
+			/usr/lib/modules/extramodules-ARCH/version
 	fi
 }
 
 post_upgrade() {
 	local new_kernel_version=${1%.*} old_kernel_version=${2%.*}
-	local f=/usr/lib/modules/extramodules-$old_kernel_version-ARCH/version
+	local V=/usr/lib/modules/extramodules-ARCH/version
 	if [ $new_kernel_version != $old_kernel_version ]; then
 		post_remove $2
 		post_install $1
-	elif [ ! -L $f -a ! -e $f -o "$(readlink $f)" = "$f-$2" ]; then
-		# `version` does not exists in any form or is a link to previous kernel
-		ln -sf $f-$1 $f
+	elif [ ! -L $V -a ! -e $V -o "$(readlink $V)" = "$V-$2" ]; then
+		# `version` does not exists in any form or is a link previous kernel
+		ln -sf $V-$1 $V
 	fi
 }
 
 post_remove() {
 	local kernel_version=${1%.*}
-	if [ "$(readlink /usr/lib/modules/extramodules-$kernel_version-ARCH/version)" = \
-			/usr/lib/modules/extramodules-$kernel_version-ARCH/version-$1 ]; then
-		rm /usr/lib/modules/extramodules-$kernel_version-ARCH/version
+	if [ "$(readlink /usr/lib/modules/extramodules-ARCH/version)" = \
+			/usr/lib/modules/extramodules-ARCH/version-$1 ]; then
+		rm /usr/lib/modules/extramodules-ARCH/version
 	fi
 }

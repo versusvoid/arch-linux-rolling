@@ -1,7 +1,7 @@
 [Trigger]
 Type = File
 Operation = Remove
-Target = usr/lib/modules/extramodules-*-ARCH/version*
+Target = usr/lib/modules/extramodules-ARCH/version*
 
 [Action]
 Description = Symlink rolling kernel version to extramodules

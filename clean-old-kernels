@@ -15,8 +15,13 @@ fi
 kernel_packages=()
 skip=$NUM_KERNELS_TO_KEEP
 current_kernel=linux-rolling_$(uname -r | sed 's/-ARCH//g; s/[.-]/_/g;')
-for p in $(pacman -Qtq | egrep 'linux-rolling_[1-9]' | pacsort); do
+# record all installed kernel versions except currently running to array
+for p in $(pacman -Qtq | egrep 'linux-rolling_[1-9]' | grep -v  sort -n); do
 	if [ "$p" = "$current_kernel" ]; then
+		# current kernel version is also counted as skipped
+		# this logic makes it impossible to simply `sort -rn | tail -n +$skip`
+		# because if currently running version is in resulting list
+		# we have to drop it and add one from filtered out versions
 		if [ $skip -gt 0 ]; then
 			skip=$(($skip - 1))
 		fi

@@ -5,6 +5,7 @@ if [ ! "$_source_package" ]; then
 	echo "Can't find current kernel package"
 	return 1
 fi
+PKGEXT=".pkg.tar"
 
 _full_version=${_source_package##*linux-}
 _full_version=${_full_version%%-$CARCH.pkg.tar*}
@@ -12,9 +13,9 @@ pkgver=${_full_version%-*}
 pkgrel=${_full_version##*-}
 _kernel_version=${pkgver%.*}
 
-pkgname=('linux-rolling' "linux-rolling_${_full_version//[.-]/_}")
+pkgname=(linux-rolling "linux-rolling_${_full_version//[.-]/_}")
 pkgdesc="Arch's kernel how it meant to be"
-arch=('i686' 'x86_64')
+arch=(x86_64)
 url="https://bugs.archlinux.org/task/16702"
 license=('GPL2')
 replaces=()
@@ -31,17 +32,19 @@ source=(
 sha256sums=(
 	"SKIP" "SKIP"
 	"fa56a9d520046462a29ff5c52af2f40026a9c6537cf212b8bb2f1f41ee0838fd"
-	"eb087e424d1309edeb0ca9e367d7220dbc309f768aac9d2e3de495a3ad04fb6c"
-	"7f11c0e3a11c0088789676c0398d15c6a71dc7094c78e4093bd72e8421fbcb84"
-	"dc9912bce065140f5a955795e10490c15b42a95dcf92b5c208fe76f7ac488a0e"
+	"7e7d3febe34a5c78c2493e8441fc0281fb2bde143c27ca0ec08574892bd1185c"
+	"2c1d41e1497329b4d62306b00388be298736b1106eab85dcfdbe5615d6212dd2"
+	"9af45852750e85da9dba0908ab198372588ecd1f2efaabc28605f9b4ee60e992"
 	"bb519b71092079a66498f22ef89feb6d41393d61688896ebe0226f979ed6655e"
-	"6a4f3779e07cfbba36fd25fb4853292e4559ca96a750121836c8bedb7e1132bc"
+	"6a4f3779e07cfbba36fd25fb4853292e4559ca96a750121836c8bedb7e1132bc")
+validpgpkeys=(
+	'5B7E3FB71B7F10329A1C03AB771DF6627EDF681F' # Tobias Powalowski <tobias.powalowski@googlemail.com>
+	'8218F88849AAC522E94CF470A5E9288C4FA415FA' # Jan Steffens <jan.steffens@gmail.com>
 )
-validpgpkeys=('5B7E3FB71B7F10329A1C03AB771DF6627EDF681F') # Tobias Powalowski <tobias.powalowski@googlemail.com>
 
 package_linux-rolling() {
-	arch=('any')
-	depends=("linux-rolling_${_full_version//[.-]/_}=$_full_version" "bash")
+	arch=(any)
+	depends=("linux-rolling_${_full_version//[.-]/_}=$_full_version" bash)
 	install=linux-transitional.install
 
 	install -Dm644 91-grub.hook "$pkgdir/usr/share/libalpm/hooks/91-grub.hook"
@@ -55,10 +58,13 @@ package_linux-rolling() {
 _package_linux-rolling() {
 	pkgdesc="The Linux kernel and modules"
 	backup=("etc/mkinitcpio.d/linux-$pkgver-$pkgrel.preset")
-	depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
-	optdepends=('crda: to set the correct wireless channels of your country')
+
+	depends=($(grep -sE '^depend' "$srcdir/.PKGINFO" | sed 's/^depend = //g'))
+	eval "optdepends=($(grep -sE '^optdepend' "$srcdir"/.PKGINFO | sed 's/^optdepend = /"/g; s/$/"/g'))"
+
 	provides=("linux=$pkgver-$pkgrel")
 	conflicts=("linux=$pkgver-$pkgrel")
+
 	sed "{
 		s#boot/initramfs-linux.img#boot/initramfs-linux-$pkgver-$pkgrel.img#g;
 		s#boot/initramfs-linux-fallback.img#boot/initramfs-linux-$pkgver-$pkgrel-fallback.img#g;
@@ -85,8 +91,8 @@ _package_linux-rolling() {
 
 	mv usr/lib "$pkgdir/usr/"
 
-	mv "$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version" \
-		"$pkgdir/usr/lib/modules/extramodules-$_kernel_version-ARCH/version-$pkgver-$pkgrel"
+	mv "$pkgdir/usr/lib/modules/extramodules-ARCH/version" \
+		"$pkgdir/usr/lib/modules/extramodules-ARCH/version-$pkgver-$pkgrel"
 }
 
 eval "package_${pkgname[1]}() {
